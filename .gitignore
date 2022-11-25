@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Self-defined
+.*
+greenwireless
+out/**
+!.gitignore
