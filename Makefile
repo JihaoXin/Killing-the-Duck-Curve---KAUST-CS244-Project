@@ -33,10 +33,11 @@ PROJECTRELATIVE_PATH =
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cpp, .msg and .sm files
-OBJS = $O/greenwireless.o
+OBJS = $O/greenwireless.o $O/greenwireless_m.o
 
 # Message files
-MSGFILES =
+MSGFILES = \
+    greenwireless.msg
 
 # SM files
 SMFILES =

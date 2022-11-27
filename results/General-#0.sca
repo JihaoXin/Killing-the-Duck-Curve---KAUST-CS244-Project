@@ -1,0 +1,299 @@
+version 3
+run General-0-20221127-15:39:27-6281
+attr configname General
+attr datetime 20221127-15:39:27
+attr datetimef 20221127-153927
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network GreenNetwork
+attr processid 6281
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config network GreenNetwork
+config GreenNetwork.edge1.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge2.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge3.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge4.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge5.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge6.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge7.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge8.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge9.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge10.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge11.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge12.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge13.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge14.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge15.delayTime truncnormal(3s,1s)
+config GreenNetwork.edge16.delayTime truncnormal(3s,1s)
+
+par GreenNetwork.edge1.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge1.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge1.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator1.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator1.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator1.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge2.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge2.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge2.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator1.gate$o[1].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator1.gate$o[1].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator1.gate$o[1].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge3.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge3.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge3.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator1.gate$o[2].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator1.gate$o[2].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator1.gate$o[2].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge4.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge4.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge4.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator1.gate$o[3].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator1.gate$o[3].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator1.gate$o[3].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge5.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge5.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge5.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator2.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator2.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator2.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge6.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge6.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge6.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator2.gate$o[1].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator2.gate$o[1].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator2.gate$o[1].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge7.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge7.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge7.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator2.gate$o[2].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator2.gate$o[2].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator2.gate$o[2].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge8.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge8.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge8.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator2.gate$o[3].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator2.gate$o[3].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator2.gate$o[3].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge9.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge9.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge9.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator3.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator3.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator3.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge10.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge10.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge10.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator3.gate$o[1].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator3.gate$o[1].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator3.gate$o[1].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge11.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge11.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge11.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator3.gate$o[2].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator3.gate$o[2].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator3.gate$o[2].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge12.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge12.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge12.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator3.gate$o[3].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator3.gate$o[3].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator3.gate$o[3].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge13.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge13.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge13.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator4.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator4.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator4.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge14.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge14.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge14.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator4.gate$o[1].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator4.gate$o[1].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator4.gate$o[1].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge15.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge15.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge15.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator4.gate$o[2].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator4.gate$o[2].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator4.gate$o[2].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge16.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.edge16.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.edge16.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator4.gate$o[3].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator4.gate$o[3].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator4.gate$o[3].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator1.gate$o[4].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator1.gate$o[4].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator1.gate$o[4].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.core.gate$o[0].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.core.gate$o[0].channel disabled false
+attr mutable ""
+par GreenNetwork.core.gate$o[0].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator2.gate$o[4].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator2.gate$o[4].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator2.gate$o[4].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.core.gate$o[1].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.core.gate$o[1].channel disabled false
+attr mutable ""
+par GreenNetwork.core.gate$o[1].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator3.gate$o[4].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator3.gate$o[4].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator3.gate$o[4].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.core.gate$o[2].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.core.gate$o[2].channel disabled false
+attr mutable ""
+par GreenNetwork.core.gate$o[2].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.aggregator4.gate$o[4].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.aggregator4.gate$o[4].channel disabled false
+attr mutable ""
+par GreenNetwork.aggregator4.gate$o[4].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.core.gate$o[3].channel typename "\"GreenNetwork.Channel\""
+par GreenNetwork.core.gate$o[3].channel disabled false
+attr mutable ""
+par GreenNetwork.core.gate$o[3].channel delay 0.1s
+attr mutable ""
+attr unit s
+par GreenNetwork.edge1 typename "\"Edge\""
+par GreenNetwork.edge2 typename "\"Edge\""
+par GreenNetwork.edge3 typename "\"Edge\""
+par GreenNetwork.edge4 typename "\"Edge\""
+par GreenNetwork.edge5 typename "\"Edge\""
+par GreenNetwork.edge6 typename "\"Edge\""
+par GreenNetwork.edge7 typename "\"Edge\""
+par GreenNetwork.edge8 typename "\"Edge\""
+par GreenNetwork.edge9 typename "\"Edge\""
+par GreenNetwork.edge10 typename "\"Edge\""
+par GreenNetwork.edge11 typename "\"Edge\""
+par GreenNetwork.edge12 typename "\"Edge\""
+par GreenNetwork.edge13 typename "\"Edge\""
+par GreenNetwork.edge14 typename "\"Edge\""
+par GreenNetwork.edge15 typename "\"Edge\""
+par GreenNetwork.edge16 typename "\"Edge\""
+par GreenNetwork.aggregator1 typename "\"Aggregator\""
+par GreenNetwork.aggregator2 typename "\"Aggregator\""
+par GreenNetwork.aggregator3 typename "\"Aggregator\""
+par GreenNetwork.aggregator4 typename "\"Aggregator\""
+par GreenNetwork.core typename "\"Core\""
+par GreenNetwork typename "\"GreenNetwork\""
+

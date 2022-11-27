@@ -39,7 +39,7 @@ simple Core
 
 network GreenNetwork
 {
-    @display("bgb=564,439");
+    @display("bgb=753,559");
     types:
         channel Channel extends ned.DelayChannel
         {
@@ -47,40 +47,40 @@ network GreenNetwork
         }
     submodules:
         edge1: Edge {
-            @display("p=134,50");
+            @display("p=202,35");
         }
         edge2: Edge {
-            @display("p=222,38");
+            @display("p=290,23");
         }
         edge3: Edge {
-            @display("p=308,38");
+            @display("p=376,23");
         }
         edge4: Edge {
-            @display("p=368,50");
+            @display("p=436,35");
         }
         edge5: Edge {
-            @display("p=431,108");
+            @display("p=556,108");
         }
         edge6: Edge {
-            @display("p=464,186");
+            @display("p=589,186");
         }
         edge7: Edge {
-            @display("p=486,249");
+            @display("p=611,249");
         }
         edge8: Edge {
-            @display("p=431,311");
+            @display("p=556,311");
         }
         edge9: Edge {
-            @display("p=362,350");
+            @display("p=391,426");
         }
         edge10: Edge {
-            @display("p=279,359");
+            @display("p=308,435");
         }
         edge11: Edge {
-            @display("p=207,367");
+            @display("p=236,443");
         }
         edge12: Edge {
-            @display("p=140,350");
+            @display("p=169,426");
         }
         edge13: Edge {
             @display("p=75,311");
@@ -95,19 +95,19 @@ network GreenNetwork
             @display("p=60,83");
         }
         aggregator1: Aggregator {
-            @display("p=243,143");
+            @display("p=311,128");
         }
         aggregator2: Aggregator {
-            @display("p=344,209");
+            @display("p=469,209");
         }
         aggregator3: Aggregator {
-            @display("p=243,270");
+            @display("p=272,346");
         }
         aggregator4: Aggregator {
             @display("p=140,209");
         }
         core: Core {
-            @display("p=238,209");
+            @display("p=308,236");
         }
     connections:
         edge1.gate++ <--> Channel <--> aggregator1.gate++;
