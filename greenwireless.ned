@@ -17,6 +17,7 @@ simple Edge
 {
     parameters:
         @display("i=device/pc");
+        bool alive = default(false);
     gates:
         inout gate[];
 }
@@ -48,39 +49,51 @@ network GreenNetwork
     submodules:
         edge1: Edge {
             @display("p=202,35");
+            alive = true;
         }
         edge2: Edge {
             @display("p=290,23");
+//            alive = true;
         }
         edge3: Edge {
             @display("p=376,23");
+//            alive = true;
         }
         edge4: Edge {
             @display("p=436,35");
+//            alive = true;
         }
         edge5: Edge {
             @display("p=556,108");
+//            alive = true;
         }
         edge6: Edge {
             @display("p=589,186");
+//            alive = true;
         }
         edge7: Edge {
             @display("p=611,249");
+//            alive = true;
         }
         edge8: Edge {
             @display("p=556,311");
+//            alive = true;
         }
         edge9: Edge {
             @display("p=391,426");
+//            alive = true;
         }
         edge10: Edge {
             @display("p=308,435");
+//            alive = true;
         }
         edge11: Edge {
             @display("p=236,443");
+//            alive = true;
         }
         edge12: Edge {
             @display("p=169,426");
+            
         }
         edge13: Edge {
             @display("p=75,311");
