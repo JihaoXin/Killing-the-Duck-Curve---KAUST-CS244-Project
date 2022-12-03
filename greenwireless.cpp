@@ -2,7 +2,7 @@
 #include <string.h>
 #include <omnetpp.h>
 #include "greenwireless_m.h"
-#include <Windows.h>
+//#include <Windows.h>
 #include <queue>
 #include <mutex>
 #include <random>
