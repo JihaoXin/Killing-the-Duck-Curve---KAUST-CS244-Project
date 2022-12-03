@@ -38,4 +38,4 @@ Makefile
 greenwireless
 out/**
 !.gitignore
-results/General-\#0.sca
+results/*
