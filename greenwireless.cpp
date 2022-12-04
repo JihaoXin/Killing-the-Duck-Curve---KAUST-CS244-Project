@@ -20,20 +20,26 @@ class Edge : public cSimpleModule
     queue <greenMsg*> first;
     queue <greenMsg*> second;
     queue <greenMsg*> third;
-    int duration = 1;  //seconds
-    int newPacketInEachTick = 5; // new packets that should be generated in each tick
-    int forwardPacketNum = 5; // forwarding packets in each tick
-    int basicEnergy = 100;  // basic energy
-    int greenEnergy = 80;  // green energy
-    int energyForEachPacket = 1; // energy that should be used to send each packet.
+    int first_queue_size = 310;
+    int second_queue_size = 10;
+    int third_queue_size = 10;
     int time = 0;
+    int duration = 1;  //seconds
+    int energyForEachPacket = 1; // energy that should be used to send each packet.
+    int maxPower = 800;   // max power
+    int windEnergy = 100;
+    int solarEnergy = 0;
+    int bufferDropP1 = 0;
+    int bufferDropP2 = 0;
+    int bufferDropP3 = 0;
+    std::mt19937 rng;
     mutex g_mutex;
     cHistogram greenStats;
     cOutVector greenEnergyVector;
     cOutVector totalEnergyVector;
     cOutVector dirtyEnergyVector;
   protected:
-    virtual greenMsg *generateMessage();
+    virtual greenMsg *generateMessage(int priority);
     virtual void forwardMessage(cMessage *msg);
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
@@ -44,6 +50,7 @@ Define_Module(Edge);
 
 void Edge::initialize()
 {
+    rng.seed(std::random_device()());
     greenEnergyVector.setName("green");
     totalEnergyVector.setName("total");
     dirtyEnergyVector.setName("dirty");
@@ -59,29 +66,76 @@ double Edge::normal(double x, double miu, double sigma) {
 }
 void Edge::handleMessage(cMessage *msg)
 {
+
+    if (time == 100){
+        EV<<"Packet Drop: Priority 1, "<<" Number = "<<bufferDropP1<<"\n";
+        EV<<"Packet Drop: Priority 2, "<<" Number = "<<bufferDropP2<<"\n";
+        EV<<"Packet Drop: Priority 3, "<<" Number = "<<bufferDropP3<<"\n";
+        return;
+    }
     if (msg == timer){
         time++;
-        newPacketInEachTick = 100;
         scheduleAt(simTime() + duration, timer);
-        for(int i = 0; i < newPacketInEachTick; i++){
-            outMsg = generateMessage();
-            switch(outMsg->getPriority()){
-                case 1: first.push(outMsg);break;
-                case 2: second.push(outMsg);break;
-                case 3: third.push(outMsg);break;
+        // Generate 300 Priority 1
+        int P1 = 300;
+        for(int i = 0; i < P1; i++){
+            if (first.size() < first_queue_size){
+                outMsg = generateMessage(1);
+                first.push(outMsg);
+            }else{
+                bufferDropP1 += 1;
+                break;
+            }
+        }
+        // Generate 10-50 Priority 2
+        std::uniform_int_distribution<int> u10_50 (10, 50);
+        int P2 = u10_50(rng);
+        for(int i = 0; i < P2; i++){
+            if (second.size() < second_queue_size){
+                outMsg = generateMessage(2);
+                second.push(outMsg);
+            }
+            else if (first.size() < first_queue_size){
+                second.pop();
+                outMsg = generateMessage(1);
+                first.push(outMsg);
+                outMsg = generateMessage(2);
+                second.push(outMsg);
+            }
+            else{
+                bufferDropP2 += 1;
+                break;
+            }
+        }
+        // Generate 0-20 Priority 3
+        std::uniform_int_distribution<int> u0_20(0, 20);
+        int P3 = u0_20(rng);
+        for(int i = 0; i < P3; i++){
+            if (third.size() < third_queue_size){
+                outMsg = generateMessage(3);
+                third.push(outMsg);
+            }
+            else if (second.size() < second_queue_size){
+                third.pop();
+                outMsg = generateMessage(2);
+                second.push(outMsg);
+                outMsg = generateMessage(3);
+                second.push(outMsg);
+            }
+            else{
+                bufferDropP3 += 1;
+                break;
             }
         }
 
-        //TODO: queue thread security??
-//        default_random_engine generator;
-//        default_random_engine generator;
-        int currentGreenEnergy =  (int)(normal(time, 12*360, 1000.0)*greenEnergy*3000);
+        std::uniform_int_distribution<int> u0_500 (0, 500);
+        solarEnergy = u0_500(rng);
+        int currentGreenEnergy = windEnergy + solarEnergy;
         int netEnergyUsed = 0;
         int dirtyEnergy = 0;
         greenStats.collect(currentGreenEnergy);
         greenEnergyVector.record(currentGreenEnergy);
-//        EV << (normal(4320, 12*360, 1000.0)*greenEnergy);
-        int restEnergy = basicEnergy - currentGreenEnergy;
+        int restEnergy = maxPower - currentGreenEnergy;
         while(currentGreenEnergy >= 0){
             if(!first.empty()){
                 if(currentGreenEnergy - energyForEachPacket >= 0){
@@ -139,9 +193,8 @@ void Edge::handleMessage(cMessage *msg)
     }
 }
 
-greenMsg *Edge::generateMessage()
+greenMsg *Edge::generateMessage(int priority)
 {
-    int priority = 1 + rand() % 3;
     char *name = (char *)("Priority =" + to_string(priority)).c_str();
     // Create message object and set source and destination field.
     greenMsg *msg = new greenMsg(name);
@@ -163,7 +216,7 @@ class Aggregator : public cSimpleModule
     queue <greenMsg*> second;
     queue <greenMsg*> third;
     int duration = 1;  //seconds
-    int basicEnergy = 80;  // basic energy
+    int totalMax = 80;  // basic energy
     int greenEnergy = 10;  // green energy
     int energyForEachPacket = 10; // energy that should be used to send each packet.
   protected:
@@ -182,71 +235,71 @@ void Aggregator::initialize()
 
 void Aggregator::handleMessage(cMessage *msg)
 {
-    if(msg == timer){
-        scheduleAt(simTime() + duration, timer);
-        //forward message according to priority
-        int currentGreenEnergy =  greenEnergy;
-        int restEnergy = basicEnergy - greenEnergy;
-        while(currentGreenEnergy >= 0){
-            if(!first.empty()){
-                if(currentGreenEnergy - energyForEachPacket >= 0){
-                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
-                    greenMsg *tmp = first.front();
-                    first.pop();
-                    forwardMessage(tmp);
-                }else{
-                    break;
-                }
-            }else if (!second.empty()){
-                if(currentGreenEnergy - energyForEachPacket >= 0){
-                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
-                    greenMsg *tmp = second.front();
-                    second.pop();
-                    forwardMessage(tmp);
-                }else{
-                    break;
-                }
-            }else if (!third.empty()){
-                if(currentGreenEnergy - energyForEachPacket >= 0){
-                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
-                    greenMsg *tmp = third.front();
-                    third.pop();
-                    forwardMessage(tmp);
-                }else{
-                    break;
-                }
-            }else{
-                break;
-            }
-        }
-        while(restEnergy > 0){
-            if(!first.empty()){
-                if(restEnergy - energyForEachPacket > 0){
-                    restEnergy = restEnergy - energyForEachPacket;
-                    greenMsg *tmp = first.front();
-                    first.pop();
-                    forwardMessage(tmp);
-                }else{
-                    break;
-                }
-            }else{
-                break;
-            }
-        }
-    }else{
-        greenMsg *inMsg = (greenMsg *)msg;
-        switch(inMsg->getPriority()){
-            case 1: first.push(inMsg);break;
-            case 2: second.push(inMsg);break;
-            case 3: third.push(inMsg);break;
-        }
-    }
+//    if(msg == timer){
+//        scheduleAt(simTime() + duration, timer);
+//        //forward message according to priority
+//        int currentGreenEnergy =  greenEnergy;
+//        int restEnergy = totalMax - greenEnergy;
+//        while(currentGreenEnergy >= 0){
+//            if(!first.empty()){
+//                if(currentGreenEnergy - energyForEachPacket >= 0){
+//                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+//                    greenMsg *tmp = first.front();
+//                    first.pop();
+//                    forwardMessage(tmp);
+//                }else{
+//                    break;
+//                }
+//            }else if (!second.empty()){
+//                if(currentGreenEnergy - energyForEachPacket >= 0){
+//                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+//                    greenMsg *tmp = second.front();
+//                    second.pop();
+//                    forwardMessage(tmp);
+//                }else{
+//                    break;
+//                }
+//            }else if (!third.empty()){
+//                if(currentGreenEnergy - energyForEachPacket >= 0){
+//                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+//                    greenMsg *tmp = third.front();
+//                    third.pop();
+//                    forwardMessage(tmp);
+//                }else{
+//                    break;
+//                }
+//            }else{
+//                break;
+//            }
+//        }
+//        while(restEnergy > 0){
+//            if(!first.empty()){
+//                if(restEnergy - energyForEachPacket > 0){
+//                    restEnergy = restEnergy - energyForEachPacket;
+//                    greenMsg *tmp = first.front();
+//                    first.pop();
+//                    forwardMessage(tmp);
+//                }else{
+//                    break;
+//                }
+//            }else{
+//                break;
+//            }
+//        }
+//    }else{
+//        greenMsg *inMsg = (greenMsg *)msg;
+//        switch(inMsg->getPriority()){
+//            case 1: first.push(inMsg);break;
+//            case 2: second.push(inMsg);break;
+//            case 3: third.push(inMsg);break;
+//        }
+//    }
 }
 
 void Aggregator::forwardMessage(cMessage *msg)
 {
-    simtime_t delay = truncnormal(3,1);
-    sendDelayed(msg, delay, "gate$o", 4);
+//    simtime_t delay = truncnormal(3,1);
+//    sendDelayed(msg, delay, "gate$o", 4);
 }
 
 class Core : public cSimpleModule
