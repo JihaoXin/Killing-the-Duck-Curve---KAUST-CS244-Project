@@ -20,9 +20,9 @@ class Edge : public cSimpleModule
     queue <greenMsg*> first;
     queue <greenMsg*> second;
     queue <greenMsg*> third;
-    int first_queue_size = 310;
-    int second_queue_size = 10;
-    int third_queue_size = 10;
+    int first_queue_size = 305;
+    int second_queue_size = 5;
+    int third_queue_size = 5;
     int time = 0;
     int duration = 1;  //seconds
     int energyForEachPacket = 1; // energy that should be used to send each packet.
@@ -32,6 +32,7 @@ class Edge : public cSimpleModule
     int bufferDropP1 = 0;
     int bufferDropP2 = 0;
     int bufferDropP3 = 0;
+
     std::mt19937 rng;
     mutex g_mutex;
     cHistogram greenStats;
@@ -68,9 +69,8 @@ void Edge::handleMessage(cMessage *msg)
 {
 
     if (time == 100){
-        EV<<"Packet Drop: Priority 1, "<<" Number = "<<bufferDropP1<<"\n";
-        EV<<"Packet Drop: Priority 2, "<<" Number = "<<bufferDropP2<<"\n";
-        EV<<"Packet Drop: Priority 3, "<<" Number = "<<bufferDropP3<<"\n";
+//        EV<<"Net Energy = "<<netEnergyUsed<<"\n";
+//        EV<<"Dirty Energy = "<<dirtyEnergy<<"\n";
         return;
     }
     if (msg == timer){
@@ -84,7 +84,6 @@ void Edge::handleMessage(cMessage *msg)
                 first.push(outMsg);
             }else{
                 bufferDropP1 += 1;
-                break;
             }
         }
         // Generate 10-50 Priority 2
@@ -104,7 +103,6 @@ void Edge::handleMessage(cMessage *msg)
             }
             else{
                 bufferDropP2 += 1;
-                break;
             }
         }
         // Generate 0-20 Priority 3
@@ -124,15 +122,14 @@ void Edge::handleMessage(cMessage *msg)
             }
             else{
                 bufferDropP3 += 1;
-                break;
             }
         }
 
         std::uniform_int_distribution<int> u0_500 (0, 500);
         solarEnergy = u0_500(rng);
-        int currentGreenEnergy = windEnergy + solarEnergy;
         int netEnergyUsed = 0;
         int dirtyEnergy = 0;
+        int currentGreenEnergy = windEnergy + solarEnergy;
         greenStats.collect(currentGreenEnergy);
         greenEnergyVector.record(currentGreenEnergy);
         int restEnergy = maxPower - currentGreenEnergy;
@@ -187,7 +184,14 @@ void Edge::handleMessage(cMessage *msg)
                 break;
             }
         }
-
+        while(!second.empty()){
+            second.pop();
+            bufferDropP2 +=1;
+        }
+        while(!third.empty()){
+            third.pop();
+            bufferDropP3 +=1;
+        }
         dirtyEnergyVector.record(dirtyEnergy);
         totalEnergyVector.record(netEnergyUsed);
     }
