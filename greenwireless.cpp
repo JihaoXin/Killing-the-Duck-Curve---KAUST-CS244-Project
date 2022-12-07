@@ -23,17 +23,23 @@ class Edge : public cSimpleModule
     int duration = 1;  //seconds
     int newPacketInEachTick = 5; // new packets that should be generated in each tick
     int forwardPacketNum = 5; // forwarding packets in each tick
-    int basicEnergy = 100;  // basic energy
-    int greenEnergy = 80;  // green energy
+    int basicEnergy = 800;  // basic energy
+    int greenEnergy = 250;  // green energy
     int energyForEachPacket = 1; // energy that should be used to send each packet.
     int time = 0;
     mutex g_mutex;
-    cHistogram greenStats;
+    cHistogram onePacketNum;
+    cHistogram twoPacketNum;
+    cHistogram threePacketNum;
     cOutVector greenEnergyVector;
     cOutVector totalEnergyVector;
     cOutVector dirtyEnergyVector;
+    cOutVector restEnergyVector;
+    int onePacketCount;
+    int twoPacketCount;
+    int threePacketCount;
   protected:
-    virtual greenMsg *generateMessage();
+    virtual greenMsg *generateMessage(int priority);
     virtual void forwardMessage(cMessage *msg);
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
@@ -44,14 +50,20 @@ Define_Module(Edge);
 
 void Edge::initialize()
 {
+    onePacketCount = 0;
+    twoPacketCount = 0;
+    threePacketCount = 0;
     greenEnergyVector.setName("green");
     totalEnergyVector.setName("total");
     dirtyEnergyVector.setName("dirty");
+    restEnergyVector.setName("rest");
     if (par("alive").boolValue() == true){
         timer = new cMessage("one second timer");
         scheduleAt(0.0, timer);
     }
-//    WATCH(&first);
+    WATCH(onePacketCount);
+    WATCH(twoPacketCount);
+    WATCH(threePacketCount);
 }
 double Edge::normal(double x, double miu, double sigma) {
     double PI = 3.14;
@@ -60,88 +72,207 @@ double Edge::normal(double x, double miu, double sigma) {
 void Edge::handleMessage(cMessage *msg)
 {
     if (msg == timer){
+        queue <greenMsg*> first;
+        queue <greenMsg*> second;
+        queue <greenMsg*> third;
         time++;
-        newPacketInEachTick = 100;
+        int newPacketInEachTick = 300 + rand() % 60;
+        int additionP2 = rand()%40;
         scheduleAt(simTime() + duration, timer);
         for(int i = 0; i < newPacketInEachTick; i++){
-            outMsg = generateMessage();
+            greenMsg *outMsg;
+            if(i<280+rand()%20){
+                outMsg = generateMessage(1);
+            }else{
+
+                if((280+rand()%20<=i)&&(i<290+rand()%200)){
+                    EV << "????????????????";
+                    outMsg = generateMessage(2);
+                }else{
+                    if(additionP2>0){
+                        outMsg = generateMessage(2);
+                        additionP2--;
+                    }else{
+                        outMsg = generateMessage(3);
+                    }
+                }
+            }
+//            EV<<outMsg->getPriority();
             switch(outMsg->getPriority()){
                 case 1: first.push(outMsg);break;
                 case 2: second.push(outMsg);break;
                 case 3: third.push(outMsg);break;
             }
         }
+ //================================================ our strategy ============================================
+//        //TODO: queue thread security??
+////        default_random_engine generator;
+////        default_random_engine generator;
+//        int currentGreenEnergy =  (int)(normal(time, 12*3600, 10000.0)*greenEnergy*40000) + 100;
+//        int netEnergyUsed = 0;
+//        int dirtyEnergy = 0;
+//        greenEnergyVector.record(currentGreenEnergy);
+////        EV << currentGreenEnergy;
+//        int restEnergy = basicEnergy - currentGreenEnergy;
+//        EV << restEnergy;
+//        while(currentGreenEnergy >= 0){
+//            if(!first.empty()){
+//                if(currentGreenEnergy - energyForEachPacket >= 0){
+//                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+//                    netEnergyUsed = netEnergyUsed + energyForEachPacket;
+//                    greenMsg *tmp = first.front();
+//                    first.pop();
+//                    onePacketCount++;
+//                    forwardMessage(tmp);
+//                }else{
+//                    break;
+//                }
+//            }else if (!second.empty()){
+//                if(currentGreenEnergy - energyForEachPacket >= 0){
+//                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+//                    netEnergyUsed = netEnergyUsed + energyForEachPacket;
+//                    greenMsg *tmp = second.front();
+//                    second.pop();
+//                    twoPacketCount ++;
+//                    forwardMessage(tmp);
+//                }else{
+//                    break;
+//                }
+//            }else if (!third.empty()){
+//                if(currentGreenEnergy - energyForEachPacket >= 0){
+//                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+//                    netEnergyUsed = netEnergyUsed + energyForEachPacket;
+//                    greenMsg *tmp = third.front();
+//                    third.pop();
+//                    threePacketCount ++;
+//                    forwardMessage(tmp);
+//                }else{
+//                    break;
+//                }
+//            }else{
+//                break;
+//            }
+//        }
+////        EV << restEnergy;
+//        while(restEnergy >= 0){
+//            if(!first.empty()){
+//                if(restEnergy - energyForEachPacket >= 0){
+//                    restEnergy = restEnergy - energyForEachPacket;
+//                    netEnergyUsed = netEnergyUsed + energyForEachPacket;
+//                    dirtyEnergy = dirtyEnergy + energyForEachPacket;
+//                    greenMsg *tmp = first.front();
+//                    first.pop();
+//                    onePacketCount ++;
+//                    forwardMessage(tmp);
+//                }else{
+//                    break;
+//                }
+//            }else{
+//                break;
+//            }
+//        }
+////        restEnergyVector.record(restEnergy);
+//        dirtyEnergyVector.record(dirtyEnergy);
+//        totalEnergyVector.record(netEnergyUsed);
+//============================================= normal strategy ============================================
+                int currentGreenEnergy =  (int)(normal(time, 12*3600, 10000.0)*greenEnergy*40000) + 100;
+                int netEnergyUsed = 0;
+                int dirtyEnergy = 0;
+                greenEnergyVector.record(currentGreenEnergy);
+                int restEnergy = basicEnergy - currentGreenEnergy;
+                EV << restEnergy;
+                while(currentGreenEnergy >= 0){
+                    if(!first.empty()){
+                        if(currentGreenEnergy - energyForEachPacket >= 0){
+                            currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+                            netEnergyUsed = netEnergyUsed + energyForEachPacket;
+                            greenMsg *tmp = first.front();
+                            first.pop();
+                            onePacketCount++;
+                            forwardMessage(tmp);
+                        }else{
+                            break;
+                        }
+                    }else if (!second.empty()){
+                        if(currentGreenEnergy - energyForEachPacket >= 0){
+                            currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+                            netEnergyUsed = netEnergyUsed + energyForEachPacket;
+                            greenMsg *tmp = second.front();
+                            second.pop();
+                            twoPacketCount ++;
+                            forwardMessage(tmp);
+                        }else{
+                            break;
+                        }
+                    }else if (!third.empty()){
+                        if(currentGreenEnergy - energyForEachPacket >= 0){
+                            currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
+                            netEnergyUsed = netEnergyUsed + energyForEachPacket;
+                            greenMsg *tmp = third.front();
+                            third.pop();
+                            threePacketCount ++;
+                            forwardMessage(tmp);
+                        }else{
+                            break;
+                        }
+                    }else{
+                        break;
+                    }
+                }
+        //        EV << restEnergy;
+                while(restEnergy >= 0){
+                    if(!first.empty()){
+                        if(restEnergy - energyForEachPacket >= 0){
+                            restEnergy = restEnergy - energyForEachPacket;
+                            netEnergyUsed = netEnergyUsed + energyForEachPacket;
+                            dirtyEnergy = dirtyEnergy + energyForEachPacket;
+                            greenMsg *tmp = first.front();
+                            first.pop();
+                            onePacketCount ++;
+                            forwardMessage(tmp);
+                        }else{
+                            break;
+                        }
+                    }else if (!second.empty()){
+                        if(restEnergy - energyForEachPacket >= 0){
+                            restEnergy = restEnergy - energyForEachPacket;
+                            netEnergyUsed = netEnergyUsed + energyForEachPacket;
+                            dirtyEnergy = dirtyEnergy + energyForEachPacket;
+                            greenMsg *tmp = second.front();
+                            second.pop();
+                            twoPacketCount ++;
+                            forwardMessage(tmp);
+                        }else{
+                            break;
+                        }
+                    }else if (!third.empty()){
+                        if(restEnergy - energyForEachPacket >= 0){
+                            restEnergy = restEnergy - energyForEachPacket;
+                            netEnergyUsed = netEnergyUsed + energyForEachPacket;
+                            dirtyEnergy = dirtyEnergy + energyForEachPacket;
+                            greenMsg *tmp = third.front();
+                            third.pop();
+                            threePacketCount ++;
+                            forwardMessage(tmp);
+                        }else{
+                            break;
+                        }
+                    }else{
+                        break;
+                    }
+                }
+        //        restEnergyVector.record(restEnergy);
+                dirtyEnergyVector.record(dirtyEnergy);
+                totalEnergyVector.record(netEnergyUsed);
 
-        //TODO: queue thread security??
-//        default_random_engine generator;
-//        default_random_engine generator;
-        int currentGreenEnergy =  (int)(normal(time, 12*360, 1000.0)*greenEnergy*3000);
-        int netEnergyUsed = 0;
-        int dirtyEnergy = 0;
-        greenStats.collect(currentGreenEnergy);
-        greenEnergyVector.record(currentGreenEnergy);
-//        EV << (normal(4320, 12*360, 1000.0)*greenEnergy);
-        int restEnergy = basicEnergy - currentGreenEnergy;
-        while(currentGreenEnergy >= 0){
-            if(!first.empty()){
-                if(currentGreenEnergy - energyForEachPacket >= 0){
-                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
-                    netEnergyUsed = netEnergyUsed + energyForEachPacket;
-                    greenMsg *tmp = first.front();
-                    first.pop();
-                    forwardMessage(tmp);
-                }else{
-                    break;
-                }
-            }else if (!second.empty()){
-                if(currentGreenEnergy - energyForEachPacket >= 0){
-                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
-                    netEnergyUsed = netEnergyUsed + energyForEachPacket;
-                    greenMsg *tmp = second.front();
-                    second.pop();
-                    forwardMessage(tmp);
-                }else{
-                    break;
-                }
-            }else if (!third.empty()){
-                if(currentGreenEnergy - energyForEachPacket >= 0){
-                    currentGreenEnergy = currentGreenEnergy - energyForEachPacket;
-                    netEnergyUsed = netEnergyUsed + energyForEachPacket;
-                    greenMsg *tmp = third.front();
-                    third.pop();
-                    forwardMessage(tmp);
-                }else{
-                    break;
-                }
-            }else{
-                break;
-            }
-        }
-        while(restEnergy > 0){
-            if(!first.empty()){
-                if(restEnergy - energyForEachPacket > 0){
-                    restEnergy = restEnergy - energyForEachPacket;
-                    netEnergyUsed = netEnergyUsed + energyForEachPacket;
-                    dirtyEnergy = dirtyEnergy + energyForEachPacket;
-                    greenMsg *tmp = first.front();
-                    first.pop();
-                    forwardMessage(tmp);
-                }else{
-                    break;
-                }
-            }else{
-                break;
-            }
-        }
 
-        dirtyEnergyVector.record(dirtyEnergy);
-        totalEnergyVector.record(netEnergyUsed);
+
     }
 }
 
-greenMsg *Edge::generateMessage()
+greenMsg *Edge::generateMessage(int priority)
 {
-    int priority = 1 + rand() % 3;
+//    int priority = 1 + rand() % 3;
     char *name = (char *)("Priority =" + to_string(priority)).c_str();
     // Create message object and set source and destination field.
     greenMsg *msg = new greenMsg(name);
